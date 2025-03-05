@@ -1,3 +1,22 @@
+<!-- prompts:
+1) Create a simple HTML page with a Viking theme.
+2) The page should have a Viking ship sailing on the sea.
+3) The ship should have a mast with a sail and a flag.
+4) The page should have a login form.
+5) The login form should have a Viking sword and shield on the top.
+6) The sword and shield should be designed using CSS.
+7) The shield should have a star on it.
+8) The page should have a clock at the top.
+9) The clock should be updated every second.
+10) The clock should have a Viking design.
+
+ 
+
+
+
+-->
+
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -7,6 +26,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Join Valhalla</title>
+    <script src="script.js"></script>
 </head>
 <body>
     <div class="main-container">
@@ -30,36 +50,37 @@
         </div>
         
         <div class="bottom-section"> <!-- Subsection - Login form and Viking ship -->
-            <div class="login-container">
-                <div class="viking-ship">
-                    <div class="ship-body">
-                        <div class="ship-shields">
-                            <div class="shield"></div>
-                            <div class="shield"></div>
-                            <div class="shield"></div>
-                            <div class="shield"></div>
-                            <div class="shield"></div>
-                            <div class="shield"></div>
-                        </div>
-                        <div class="ship-mast">
-                            <div class="sail"></div>
-                            <div class="flag"></div>
-                        </div>
+            <div class="viking-ship">
+                <div class="ship-body">
+                    <div class="ship-shields">
+                        <div class="shield"></div>
+                        <div class="shield"></div>
+                        <div class="shield"></div>
+                        <div class="shield"></div>
+                        <div class="shield"></div>
+                        <div class="shield"></div>
                     </div>
-                    <div class="waves"></div>
+                    <div class="ship-mast">
+                        <div class="sail"></div>
+                        <div class="flag"></div>
+                    </div>
                 </div>
+                <div class="waves"></div>
+            </div>
+            <div class="login-container">
                 <form class="login-form">
                     <h2>LOGIN</h2>
                     <div class="form-group">
-                        <input type="text" placeholder="VIKING NAME" reKquired>
+                        <input type="text" placeholder="VIKING NAME" required>
                     </div>
                     <div class="form-group">
                         <input type="password" placeholder="Password" required>
                     </div>
-                    <button type="submit">JoIn the Battle</button>
+                    <button type="submit">JOIN the Battle</button>
                 </form>
             </div>
         </div>
     </div>
+    <div id="clock" class="clock"></div>
 </body>
 </html>

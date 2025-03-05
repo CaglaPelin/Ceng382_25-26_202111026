@@ -1,5 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Norse&display=swap');
-/* I got help from chatgpt while doing this homework */
+ /* My ChatGPT Prompts:
+    * 1. Create a Viking-themed login page with a sword and shield.
+    * 2. Add a Viking ship sailing in the background with waving flags.
+    * 3. Include a login form that shakes when the sword is hovered over.
+    * 4. Add a clock in the top-right corner of the page.
+    * 5. Ensure the design is responsive and visually appealing.
+    */
 :root {
     /* Color and font definitions for the Viking theme */
     --silver-light: #C0C2C9;
@@ -383,6 +389,7 @@ body {
     margin-bottom: 2rem;
     color: var(--silver-light);
     text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    text-align: center; /* Login yazısını ortalamak için ekleyin */
 }
 
 .form-group {
@@ -597,4 +604,14 @@ body {
     100% {
         transform: translate(0, 0);
     }
+}
+
+.clock {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    font-family: var(--viking-font);
+    color: var(--silver-light);
+    font-size: 1rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
 }
