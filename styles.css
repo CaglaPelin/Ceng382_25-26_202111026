@@ -1,5 +1,27 @@
+/*-- Prompt 
+1) Create a Viking-themed login page with a sword and shield design.
+2) The sword should have a stabbing animation when hovered over.
+3) The shield should have a spinning animation.
+4)My background package put background photo.
+5) The login form should have a metallic design.
+6) The page should have a Viking ship sailing across the screen.
+7)Put the axe photo I selected as the cursor.
+8)Create a viking themed ship and make it scroll to the right on the x-axis of the page.
+9)Use viking .
+
+*/
+
+
+
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Norse&display=swap');
-/* I got help from chatgpt while doing this homework */
+
+
+@font-face {
+    font-family: 'Viking';
+    src: url('VIKING-N.ttf') format('truetype');
+}
+
+
 :root {
     /* Color and font definitions for the Viking theme */
     --silver-light: #C0C2C9;
@@ -375,7 +397,7 @@ body {
 }
 
 .login-form h2 {
-    font-family: var(--title-font);
+    font-family: 'Viking', serif; 
     font-weight: 700;
     font-size: 2.5rem;
     letter-spacing: 3px;
@@ -383,6 +405,7 @@ body {
     margin-bottom: 2rem;
     color: var(--silver-light);
     text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    text-align: center; 
 }
 
 .form-group {
@@ -400,7 +423,7 @@ body {
     color: var(--silver-light);
     font-size: 1rem;
     text-align: center;
-    font-family: var(--viking-font);
+    font-family: 'Viking', serif; 
 }
 
 .form-group input::placeholder {
@@ -422,7 +445,7 @@ body {
     text-transform: uppercase;
     font-weight: bold;
     border: 2px solid var(--silver-dark);
-    font-family: var(--title-font);
+    font-family: 'Viking', serif; 
     font-weight: 700;
     letter-spacing: 2px;
 }
