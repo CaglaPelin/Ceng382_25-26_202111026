@@ -1,11 +1,19 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Norse&display=swap');
- /* My ChatGPT Prompts:
-    * 1. Create a Viking-themed login page with a sword and shield.
-    * 2. Add a Viking ship sailing in the background with waving flags.
-    * 3. Include a login form that shakes when the sword is hovered over.
-    * 4. Add a clock in the top-right corner of the page.
-    * 5. Ensure the design is responsive and visually appealing.
+/* My ChatGPT Prompts:
+    * 1.Set clock font to vikings font
+    
     */
+
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Norse&display=swap');
+ 
+
+ @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Norse&display=swap');
+
+
+@font-face {
+    font-family: 'Viking';
+    src: url('VIKING-N.ttf') format('truetype');
+}
 :root {
     /* Color and font definitions for the Viking theme */
     --silver-light: #C0C2C9;
@@ -25,6 +33,22 @@
     --viking-gray: #2C2C2C; 
     --viking-font: 'Cinzel', serif;
     --title-font: 'Cinzel', serif;
+    --viking-n: 'Norse', serif;
+}
+
+
+
+/* Apply Viking-N font to all text in the login screen */
+body, h1, h2, label, input, textarea, button {
+    font-family: var(--viking-n);
+}
+
+/* Apply Viking font to the clock */
+.clock {
+    font-family: 'Viking', serif;
+    color: var(--silver-light);
+    font-size: 1rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
 }
 /* Page Main Structure and Background Settings */
 body {
@@ -389,7 +413,8 @@ body {
     margin-bottom: 2rem;
     color: var(--silver-light);
     text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-    text-align: center; /* Login yazısını ortalamak için ekleyin */
+    text-align: center; 
+    font-family: 'Viking', serif; 
 }
 
 .form-group {
@@ -407,7 +432,7 @@ body {
     color: var(--silver-light);
     font-size: 1rem;
     text-align: center;
-    font-family: var(--viking-font);
+    font-family: 'Viking', serif; 
 }
 
 .form-group input::placeholder {
@@ -430,6 +455,7 @@ body {
     font-weight: bold;
     border: 2px solid var(--silver-dark);
     font-family: var(--title-font);
+    font-family: 'Viking', serif; 
     font-weight: 700;
     letter-spacing: 2px;
 }
@@ -612,6 +638,7 @@ body {
     right: 10px;
     font-family: var(--viking-font);
     color: var(--silver-light);
+    font-family: 'Viking', serif; 
     font-size: 1rem;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
 }
