@@ -1,0 +1,104 @@
+﻿@* 
+Prompt (GPT): 
+"Can you make this Razor Pages project more aesthetic and visually appealing using Bootstrap? 
+It should have a form on the left side and a table on the right side. Also, add icons and emojis to make the design more engaging." 
+*@
+
+
+
+@page
+@model IndexModel
+
+<div class="container py-5">
+    <h2 class="display-5 fw-bold text-center mb-5 text-primary">
+        🚀 Class Information Dashboard
+    </h2>
+    <div class="row g-5">
+        <!-- Sol taraftaki Form Paneli -->
+        <div class="col-lg-4">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-primary text-white text-center rounded-top-4">
+                    ✨ @(Model.EditId == 0 ? "Add Class" : "Update Class")
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <input type="hidden" asp-for="EditId" />
+                        <div class="mb-3">
+                            <label class="form-label">📖 Class Name</label>
+                            <input asp-for="NewClass.ClassName" class="form-control rounded-pill" placeholder="e.g. Mathematics" />
+                            <span asp-validation-for="NewClass.ClassName" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">👥 Number of Students</label>
+                            <input asp-for="NewClass.StudentCount" type="number" class="form-control rounded-pill" placeholder="e.g. 25" />
+                            <span asp-validation-for="NewClass.StudentCount" class="text-danger small"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">🗒️ Description</label>
+                            <textarea asp-for="NewClass.Description" class="form-control rounded-4" rows="3" placeholder="Brief description"></textarea>
+                            <span asp-validation-for="NewClass.Description" class="text-danger small"></span>
+                        </div>
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" asp-page-handler="Submit" class="btn @(Model.EditId == 0 ? "btn-primary" : "btn-warning") rounded-pill">
+                                @(Model.EditId == 0 ? "➕ Add Class" : "🔄 Update Class")
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sağ taraftaki Tablo Paneli -->
+        <div class="col-lg-8">
+            <div class="table-responsive shadow-lg rounded-4">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th class="text-center">🔑 ID</th>
+                            <th>📚 Class Name</th>
+                            <th class="text-center">🎓 Students</th>
+                            <th>📝 Description</th>
+                            <th class="text-center">⚙️ Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (IndexModel.ClassList.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-4">No classes added yet.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var item in IndexModel.ClassList)
+                            {
+                                <tr>
+                                    <td class="text-center">
+                                        <span class="badge bg-primary">@item.Id</span>
+                                    </td>
+                                    <td>@item.ClassName</td>
+                                    <td class="text-center">@item.StudentCount</td>
+                                    <td>@item.Description</td>
+                                    <td class="text-center">
+                                        <form method="post" class="d-inline">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <button asp-page-handler="LoadEdit" class="btn btn-sm btn-warning rounded-pill text-dark">✏️ Edit</button>
+                                        </form>
+                                        <form method="post" class="d-inline">
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <button asp-page-handler="Delete" class="btn btn-sm btn-outline-danger rounded-pill">🗑️ Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
