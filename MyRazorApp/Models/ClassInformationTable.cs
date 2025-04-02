@@ -1,18 +1,9 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace MyRazorApp.Models
 {
-    public class ClassInformationModel
+    public class ClassInformationTable
     {
-        public int Id { get; set; }
-
-        [Required]
         public string ClassName { get; set; } = "";
-
-        [Range(1, 1000)]
         public int StudentCount { get; set; }
-
-        [Required]
         public string Description { get; set; } = "";
     }
 }
