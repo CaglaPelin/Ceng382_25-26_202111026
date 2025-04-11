@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\user\\OneDrive\\Masaüstü\\week6\\MyRazorApp\\MyRazorApp.csproj": {}
+    "C:\\Users\\user\\OneDrive\\Masaüstü\\sonsonw7\\MyRazorApp\\MyRazorApp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\user\\OneDrive\\Masaüstü\\week6\\MyRazorApp\\MyRazorApp.csproj": {
+    "C:\\Users\\user\\OneDrive\\Masaüstü\\sonsonw7\\MyRazorApp\\MyRazorApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\user\\OneDrive\\Masaüstü\\week6\\MyRazorApp\\MyRazorApp.csproj",
+        "projectUniqueName": "C:\\Users\\user\\OneDrive\\Masaüstü\\sonsonw7\\MyRazorApp\\MyRazorApp.csproj",
         "projectName": "MyRazorApp",
-        "projectPath": "C:\\Users\\user\\OneDrive\\Masaüstü\\week6\\MyRazorApp\\MyRazorApp.csproj",
+        "projectPath": "C:\\Users\\user\\OneDrive\\Masaüstü\\sonsonw7\\MyRazorApp\\MyRazorApp.csproj",
         "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\user\\OneDrive\\Masaüstü\\week6\\MyRazorApp\\obj\\",
+        "outputPath": "C:\\Users\\user\\OneDrive\\Masaüstü\\sonsonw7\\MyRazorApp\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

@@ -1,16 +1,10 @@
-﻿@*
-GPT Prompt:
-Design a visually appealing and user-friendly Razor Pages frontend using Bootstrap 5.
-The page layout should include a two-column structure:
-- Left: A responsive card that contains a form for adding or updating class information (Class Name, Student Count, Description).
-- Right: A table displaying filtered results with Edit and Delete buttons, along with pagination buttons (1, 2, 3...) below.
-The form's title and button text should dynamically change between "Add Class" and "Update Class".
-Include a top margin so the form doesn’t appear too close to the page header. Use soft shadows, rounded corners, and consistent spacing for aesthetics.
+﻿@* GPT Prompts:
+ JSON dışa aktarma (export) özelliği eklenmek isteniyor; sadece o sayfadaki veriler indirilsin. Bu nasıl yapılır?
+ Kullanıcının tablo kolon başlıklarına tıklayarak kolonları seçmesi ve sadece seçilen kolonları JSON olarak dışa aktarması nasıl sağlanır?
+Json formatında verileri boş döndürüyor. Bunu nasıl düzeltebilirim?
+
+
 *@
-
-
-
-
 @page
 @model IndexModel
 
@@ -20,7 +14,6 @@ Include a top margin so the form doesn’t appear too close to the page header. 
     <div class="row g-5">
         <!-- 📝 FORM -->
         <div class="col-lg-4" style="margin-top: 145px;">
-
             <div class="card shadow border-0 rounded-4">
                 <div class="card-header bg-gradient bg-primary text-white text-center fs-5 rounded-top-4 fw-semibold">
                     @(Model.EditId == 0 ? "➕ Add Class" : "🔄 Update Class")
@@ -55,66 +48,120 @@ Include a top margin so the form doesn’t appear too close to the page header. 
 
         <!-- 📋 TABLO -->
         <div class="col-lg-8">
-          
-<h5 class="text-center text-secondary">🔎 Filter by Class Name</h5>
-<form method="get" class="mb-4 d-flex justify-content-center">
-    <div class="input-group w-75 shadow-sm">
-        <input name="FilterText" value="@Model.FilterText" class="form-control" placeholder="Type to search..." />
-        <button type="submit" class="btn btn-outline-primary">Filter</button>
+            <h5 class="text-center text-secondary">🔎 Filter by Class Name</h5>
+            <form method="get" class="mb-4 d-flex justify-content-center">
+                <div class="input-group w-75 shadow-sm">
+                    <input name="FilterText" value="@Model.FilterText" class="form-control" placeholder="Type to search..." />
+                    <button type="submit" class="btn btn-outline-primary">Filter</button>
+                </div>
+            </form>
+
+            <!-- Tablo -->
+            <div class="table-responsive shadow rounded-4 border border-2 border-light">
+                <table class="table table-hover align-middle text-center mb-0" id="dataTable">
+                    <thead class="table-primary text-dark">
+                        <tr>
+                            <th class="selectable" data-col="ClassName" style="cursor: pointer;">
+                                📚 Class Name
+                            </th>
+                            <th class="selectable" data-col="StudentCount" style="cursor: pointer;">
+                                🎓 Students
+                            </th>
+                            <th class="selectable" data-col="Description" style="cursor: pointer;">
+                                📝 Description
+                            </th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white">
+                        @foreach (var item in Model.FilteredClasses)
+                        {
+                            <tr>
+                                <td>@item.ClassName</td>
+                                <td>@item.StudentCount</td>
+                                <td>@item.Description</td>
+                                <td>
+                                    <!-- Edit Butonu -->
+                                    <form method="post" asp-page-handler="LoadEdit" asp-route-id="@item.Id" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-outline-primary">✏️ Edit</button>
+                                    </form>
+                                    <!-- Delete Butonu -->
+                                    <form method="post" asp-page-handler="Delete" asp-route-id="@item.Id" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">🗑️ Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+           
+            <div class="text-end mb-3">
+                <form method="post" asp-page-handler="ExportSelectedJson" id="exportForm">
+                    <input type="hidden" id="SelectedColumns" name="SelectedColumns" />
+                    <button type="submit" class="btn btn-outline-success rounded-pill shadow-sm" id="exportButton">
+                        📤 Export Columns as JSON
+                    </button>
+                </form>
+            </div>
+
+            <div class="text-end mb-3">
+                <a asp-page-handler="DownloadJson" asp-route-currentPage="@Model.CurrentPage" asp-route-filter="@Model.FilterText"
+                   class="btn btn-outline-primary rounded-pill shadow-sm">
+                    📥 Export Current Page as JSON
+                </a>
+            </div>
+
+            <!-- Sayfalama -->
+            <div class="mt-4 text-center">
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <a class="btn btn-sm @(Model.CurrentPage == i ? "btn-primary" : "btn-outline-secondary") m-1 shadow-sm rounded-pill"
+                       href="?CurrentPage=@i&FilterText=@Model.FilterText">@i</a>
+                }
+            </div>
+        </div>
     </div>
+</div>
+
+
+<form method="post" asp-page-handler="ExportSelectedJson" id="exportForm">
+    <input type="hidden" id="SelectedColumns" name="SelectedColumns" />
+    <button type="submit" class="btn btn-primary" id="exportButton" disabled>
+        Export Selected Columns
+    </button>
 </form>
 
-<!-- 🪄 Tablo -->
-<div class="mt-3 table-responsive shadow rounded-4 border border-2 border-light">
-    <table class="table table-hover align-middle text-center mb-0">
-        <thead class="table-primary text-dark">
-            <tr>
-                <th>📚 Class Name</th>
-                <th>🎓 Students</th>
-                <th class="text-start">📝 Description</th>
-                <th>⚙️ Actions</th>
-            </tr>
-        </thead>
-        <tbody class="bg-white">
-            @if (Model.FilteredClasses.Count == 0)
-            {
-                <tr>
-                    <td colspan="4" class="text-muted py-4">No data found.</td>
-                </tr>
-            }
-            else
-            {
-                @foreach (var item in Model.FilteredClasses)
-                {
-                    <tr>
-                        <td class="fw-semibold">@item.ClassName</td>
-                        <td>@item.StudentCount</td>
-                        <td class="text-start">@item.Description</td>
-                        <td>
-                            <form method="post" class="d-inline">
-                                <input type="hidden" name="id" value="@item.Id" />
-                                <button asp-page-handler="LoadEdit" class="btn btn-sm btn-warning text-dark rounded-pill shadow-sm">✏️ Edit</button>
-                            </form>
-                            <form method="post" class="d-inline">
-                                <input type="hidden" name="id" value="@item.Id" />
-                                <button asp-page-handler="Delete" class="btn btn-sm btn-danger rounded-pill shadow-sm">🗑️ Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                }
-            }
-        </tbody>
-    </table>
-</div>
-<!--  Sayfalama -->
-<div class="mt-4 text-center">
-    @for (int i = 1; i <= Model.TotalPages; i++)
-    {
-        <a class="btn btn-sm @(Model.CurrentPage == i ? "btn-primary" : "btn-outline-secondary") m-1 shadow-sm rounded-pill"
-           href="?CurrentPage=@i&FilterText=@Model.FilterText">@i</a>
-    }
-</div>
-
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    <script>
+        const selectedColumns = new Set();
+        const exportButton = document.getElementById('exportButton');
+
+        document.querySelectorAll('.selectable').forEach(header => {
+            header.addEventListener('click', function() {
+                const column = this.dataset.col;
+                
+                if (selectedColumns.has(column)) {
+                    selectedColumns.delete(column);
+                    this.classList.remove('table-warning');
+                } else {
+                    selectedColumns.add(column);
+                    this.classList.add('table-warning');
+                }
+
+              
+                document.getElementById('SelectedColumns').value = Array.from(selectedColumns).join(',');
+            });
+        });
+    </script>
 }
+
+<form method="post" asp-page-handler="ExportSelectedJson">
+    <input type="hidden" id="SelectedColumns" name="SelectedColumns" value="@string.Join(",", Model.SelectedColumns)" />
+    <div class="text-end mb-3">
+        <button type="submit" class="btn btn-outline-success rounded-pill shadow-sm">
+            📤 Export Selected Columns as JSON
+        </button>
+    </div>
+</form>

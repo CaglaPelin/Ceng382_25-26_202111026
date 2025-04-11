@@ -20,3 +20,31 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.export-column-label {
+    padding: 5px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.column-checkbox:checked + label {
+    background-color: #d3f9d8;
+    border-color: #28a745;
+}
+
+.selectable-column {
+    cursor: pointer;
+    padding: 10px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.selectable-column:hover {
+    background-color: #f0f0f0;
+}
+
+.selected-column {
+    background-color: #d3f9d8;
+    border-color: #28a745;
+}
