@@ -1,0 +1,49 @@
+@*
+GPT Prompt:
+Razor Pages uygulamamda modern bir kullanıcı giriş ekranı tasarlamak istiyorum. 
+Bootstrap 5 kullanarak mobil uyumlu, ikonlarla desteklenmiş ve estetik bir görünüm elde etmeliyim. 
+Ayrıca giriş hatalarında kullanıcıya anlamlı hata mesajları göstermeliyim.
+*@
+
+
+
+@page
+@model LoginModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="container d-flex align-items-center justify-content-center" style="height: 100vh;">
+    <div class="card shadow-lg p-4 rounded-4 border-0" style="max-width: 400px; width: 100%;">
+        <h3 class="text-center mb-4 text-primary fw-bold">🔐 User Login</h3>
+
+        <form method="post">
+            <!-- Username -->
+            <div class="mb-3">
+                <label asp-for="Username" class="form-label">👤 Username</label>
+                <input asp-for="Username" class="form-control rounded-pill shadow-sm" placeholder="Enter your username" />
+                <span asp-validation-for="Username" class="text-danger small"></span>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label">🔑 Password</label>
+                <input asp-for="Password" type="password" class="form-control rounded-pill shadow-sm" placeholder="Enter your password" />
+                <span asp-validation-for="Password" class="text-danger small"></span>
+            </div>
+
+            <!-- Error Message -->
+            @if (!string.IsNullOrEmpty(Model.Message))
+            {
+                <div class="alert alert-danger text-center py-2" role="alert">
+                    @Model.Message
+                </div>
+            }
+
+            <!-- Submit Button -->
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary rounded-pill shadow-sm">✔️ Login</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,13 +1,13 @@
 /*
-PROMPT:
+GPT Prompt:
+Razor Pages projemde JSON olarak veri indirme butonu yapmak istiyorum. 
+Kullanıcı sadece filtrelenmiş verileri görebilsin ve o sayfadaki veriyi JSON olarak indirebilsin. 
+Ayrıca kullanıcı kolon başlıklarına tıklayarak sadece o kolonları seçebilmeli ve sadece seçilen kolonları JSON formatında dışa aktarabilmeli. 
+Bu işlemleri sayfalama desteği ile birlikte nasıl yapabilirim?
+Ayrıca güvenlik kontrolü yapmak istiyorum: Kullanıcının giriş yapıp yapmadığını Cookie ve Session üzerinden kontrol edip,
+giriş yapılmadıysa kullanıcıyı login sayfasına yönlendirmek istiyorum.
+*/
 
-Razor Pages uygulamamda JSON olarak veri indirme butonu yapmak istiyorum. Kullanıcı sadece filtrelenmiş verileri görebilsin ve o sayfadaki veriyi JSON olarak indirebilsin. Bu işlemi nasıl yaparım?
-Kullanıcının belirli kolonları seçerek sadece o kolonları içeren JSON çıktısı almasını istiyorum. Razor Pages projemde bunu nasıl sağlayabilirim?
-Sayfalama (pagination) nasıl yapılır? Mevcut filtreyle birlikte kaç sayfa olduğunu nasıl hesaplar ve o sayfayı görüntülerim?
-Sadece seçilen bir kolona ait veriyi JSON olarak dışa aktaran bir Razor Pages metodu yazabilir misin? Örneğin sadece ClassName kolonunu seçip JSON çıktısı almak istiyorum.
-JSON verisini UTF-8 ile encode edip kullanıcıya indirme dosyası olarak nasıl sunabilirim? Dosya ismini dinamik olarak belirleyebilir miyim?
-
- */
 
 
 
@@ -51,9 +51,28 @@ namespace MyRazorApp.Pages
 
         private static int _nextId = 101;
         private static bool IsInitialized = false;
+ 
 
-        public void OnGet()
+       public IActionResult OnGet()
         {
+            var token = HttpContext.Session.GetString("token");
+            var username = HttpContext.Session.GetString("username");
+            var sessionId = HttpContext.Session.GetString("session_id");
+
+            if (token == null || username == null || sessionId == null)
+            {
+                return RedirectToPage("/Login");
+            }
+
+            var cookieToken = Request.Cookies["token"];
+            var cookieUser = Request.Cookies["username"];
+            var cookieSessionId = Request.Cookies["session_id"];
+
+            if (cookieToken != token || cookieUser != username || cookieSessionId != sessionId)
+            {
+                return RedirectToPage("/Login");
+            }
+
             if (!IsInitialized)
             {
                 for (int i = 1; i <= 100; i++)
@@ -70,33 +89,7 @@ namespace MyRazorApp.Pages
             }
 
             ApplyFilteringAndPaging();
-        }
-
-        public IActionResult OnPostSubmit()
-        {
-            if (!ModelState.IsValid)
-            {
-                ApplyFilteringAndPaging();
-                return Page();
-            }
-
-            if (EditId == 0)
-            {
-                NewClass.Id = _nextId++;
-                AllClasses.Add(NewClass);
-            }
-            else
-            {
-                var item = AllClasses.FirstOrDefault(c => c.Id == EditId);
-                if (item != null)
-                {
-                    item.ClassName = NewClass.ClassName;
-                    item.StudentCount = NewClass.StudentCount;
-                    item.Description = NewClass.Description;
-                }
-            }
-
-            return RedirectToPage(new { FilterText, CurrentPage });
+            return Page();
         }
 
         public IActionResult OnPostLoadEdit(int id)
@@ -206,6 +199,50 @@ namespace MyRazorApp.Pages
             var bytes = Encoding.UTF8.GetBytes(json);
 
             return File(bytes, "application/json", $"{column}-data.json");
+        }
+
+        public IActionResult OnPostAdd()
+        {
+            if (!ModelState.IsValid)
+            {
+                ApplyFilteringAndPaging();
+                return Page();
+            }
+
+            NewClass.Id = _nextId++;
+            AllClasses.Add(new ClassInformationModel
+            {
+                Id = NewClass.Id,
+                ClassName = NewClass.ClassName,
+                StudentCount = NewClass.StudentCount,
+                Description = NewClass.Description
+            });
+
+            NewClass = new ClassInformationModel(); // Formu sıfırla
+            ApplyFilteringAndPaging();
+            return RedirectToPage(new { FilterText, CurrentPage });
+        }
+
+        public IActionResult OnPostUpdate()
+        {
+            if (!ModelState.IsValid)
+            {
+                ApplyFilteringAndPaging();
+                return Page();
+            }
+
+            var item = AllClasses.FirstOrDefault(c => c.Id == EditId);
+            if (item != null)
+            {
+                item.ClassName = NewClass.ClassName;
+                item.StudentCount = NewClass.StudentCount;
+                item.Description = NewClass.Description;
+            }
+
+            EditId = 0; // Düzenleme modundan çık
+            NewClass = new ClassInformationModel(); // Formu sıfırla
+            ApplyFilteringAndPaging();
+            return RedirectToPage(new { FilterText, CurrentPage });
         }
 
         private void ApplyFilteringAndPaging()

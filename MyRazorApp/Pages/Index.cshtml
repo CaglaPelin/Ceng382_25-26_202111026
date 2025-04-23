@@ -19,25 +19,25 @@ Json formatında verileri boş döndürüyor. Bunu nasıl düzeltebilirim?
                     @(Model.EditId == 0 ? "➕ Add Class" : "🔄 Update Class")
                 </div>
                 <div class="card-body bg-light">
-                    <form method="post">
+                    <form method="post" asp-page-handler="@(Model.EditId == 0 ? "Add" : "Update")">
                         <input type="hidden" asp-for="EditId" />
                         <div class="mb-3">
                             <label class="form-label">📖 Class Name</label>
-                            <input asp-for="NewClass.ClassName" class="form-control rounded-pill shadow-sm" />
+                            <input asp-for="NewClass.ClassName" class="form-control rounded-pill shadow-sm" required />
                             <span asp-validation-for="NewClass.ClassName" class="text-danger small"></span>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">👥 Number of Students</label>
-                            <input asp-for="NewClass.StudentCount" type="number" class="form-control rounded-pill shadow-sm" />
+                            <input asp-for="NewClass.StudentCount" type="number" class="form-control rounded-pill shadow-sm" required />
                             <span asp-validation-for="NewClass.StudentCount" class="text-danger small"></span>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">📝 Description</label>
-                            <textarea asp-for="NewClass.Description" class="form-control rounded-4 shadow-sm" rows="3"></textarea>
+                            <textarea asp-for="NewClass.Description" class="form-control rounded-4 shadow-sm" rows="3" required></textarea>
                             <span asp-validation-for="NewClass.Description" class="text-danger small"></span>
                         </div>
                         <div class="d-grid mt-4">
-                            <button type="submit" asp-page-handler="Submit" class="btn @(Model.EditId == 0 ? "btn-primary" : "btn-warning text-dark") rounded-pill shadow">
+                            <button type="submit" class="btn btn-primary rounded-pill shadow">
                                 @(Model.EditId == 0 ? "➕ Add Class" : "✔️ Update Class")
                             </button>
                         </div>
@@ -96,22 +96,25 @@ Json formatında verileri boş döndürüyor. Bunu nasıl düzeltebilirim?
                 </table>
             </div>
 
-           
-            <div class="text-end mb-3">
-                <form method="post" asp-page-handler="ExportSelectedJson" id="exportForm">
-                    <input type="hidden" id="SelectedColumns" name="SelectedColumns" />
-                    <button type="submit" class="btn btn-outline-success rounded-pill shadow-sm" id="exportButton">
-                        📤 Export Columns as JSON
-                    </button>
-                </form>
-            </div>
+            
+            <div class="d-flex justify-content-end gap-3 mb-3">
+        <!-- Export Selected Columns -->
+        <form method="post" asp-page-handler="ExportSelectedJson" id="exportForm">
+            <input type="hidden" id="SelectedColumns" name="SelectedColumns" />
+            <button type="submit" class="btn btn-outline-success rounded-pill shadow-sm" id="exportButton">
+                📤 Export Columns as JSON
+            </button>
+        </form>
 
-            <div class="text-end mb-3">
-                <a asp-page-handler="DownloadJson" asp-route-currentPage="@Model.CurrentPage" asp-route-filter="@Model.FilterText"
-                   class="btn btn-outline-primary rounded-pill shadow-sm">
-                    📥 Export Current Page as JSON
-                </a>
-            </div>
+        <!-- Export Current Page -->
+        <a asp-page-handler="DownloadJson"
+        asp-route-currentPage="@Model.CurrentPage"
+        asp-route-filter="@Model.FilterText"
+        class="btn btn-outline-primary rounded-pill shadow-sm">
+            📥 Export Current Page as JSON
+        </a>
+    </div>
+
 
             <!-- Sayfalama -->
             <div class="mt-4 text-center">
@@ -126,12 +129,8 @@ Json formatında verileri boş döndürüyor. Bunu nasıl düzeltebilirim?
 </div>
 
 
-<form method="post" asp-page-handler="ExportSelectedJson" id="exportForm">
-    <input type="hidden" id="SelectedColumns" name="SelectedColumns" />
-    <button type="submit" class="btn btn-primary" id="exportButton" disabled>
-        Export Selected Columns
-    </button>
-</form>
+<a href="/Logout" class="btn btn-danger rounded-pill shadow-sm">🚪 Logout</a>
+
 
 @section Scripts {
     <script>
@@ -157,11 +156,4 @@ Json formatında verileri boş döndürüyor. Bunu nasıl düzeltebilirim?
     </script>
 }
 
-<form method="post" asp-page-handler="ExportSelectedJson">
-    <input type="hidden" id="SelectedColumns" name="SelectedColumns" value="@string.Join(",", Model.SelectedColumns)" />
-    <div class="text-end mb-3">
-        <button type="submit" class="btn btn-outline-success rounded-pill shadow-sm">
-            📤 Export Selected Columns as JSON
-        </button>
-    </div>
-</form>
+
