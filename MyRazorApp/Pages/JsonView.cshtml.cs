@@ -1,34 +1,33 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+using MyRazorApp.Data;
 using MyRazorApp.Models;
-using MyRazorApp.Helpers;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace MyRazorApp.Pages
 {
     public class JsonViewModel : PageModel
     {
-        public string JsonOutput { get; set; } = string.Empty;
+        private readonly SchoolDbContext _context;
 
-        [BindProperty(SupportsGet = true)]
-        public string? FilterText { get; set; }
-
-        [BindProperty(SupportsGet = true)]
-        public int CurrentPage { get; set; } = 1;
-
-        public void OnGet()
+        public JsonViewModel(SchoolDbContext context)
         {
-            var pageSize = 10;
-            var query = IndexModel.AllClasses.AsQueryable();
+            _context = context;
+        }
 
-            if (!string.IsNullOrEmpty(FilterText))
-                query = query.Where(c => c.ClassName.Contains(FilterText, StringComparison.OrdinalIgnoreCase));
+        public List<Class> FilteredClasses { get; set; } = new();
 
-            var paged = query
-                .Skip((CurrentPage - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
+        public async Task<IActionResult> OnGetAsync()
+        {
+            // FilteredClasses'ı veritabanından doldur
+            FilteredClasses = await _context.Classes
+                                            .Where(c => c.IsActive)
+                                            .ToListAsync();
 
-            JsonOutput = JsonUtils.Instance.Serialize(paged);
+            return Page();
         }
     }
 }

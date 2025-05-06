@@ -1,9 +1,10 @@
 ﻿@* GPT Prompts:
- JSON dışa aktarma (export) özelliği eklenmek isteniyor; sadece o sayfadaki veriler indirilsin. Bu nasıl yapılır?
- Kullanıcının tablo kolon başlıklarına tıklayarak kolonları seçmesi ve sadece seçilen kolonları JSON olarak dışa aktarması nasıl sağlanır?
-Json formatında verileri boş döndürüyor. Bunu nasıl düzeltebilirim?
-
-
+ Şu anda Razor Pages tabanlı bir projede kullanıcı giriş ve tablo işlemlerini JSON dosyaları üzerinden yapıyorum. Ancak artık tüm veri işlemlerini (login dahil) bir veritabanı (SQL Server) kullanarak gerçekleştirmem gerekiyor. Projede tüm CRUD işlemlerini (Create, Read, Update, Delete) veritabanına uygun hale getirmem lazım. Özellikle JSON okuma, yazma ve güncelleme işlemlerini EF Core kullanarak veritabanı işlemlerine çevirmeliyim.
+ Bana şunlarda rehberlik eder misin:
+ EF Core ile DbContext ve Model sınıflarını nasıl tanımlarım?
+ Login işlemini veritabanı doğrulamasına nasıl taşırım?
+ JSON yerine veritabanı kullanarak tablo (sınıf listesi) üzerinde nasıl CRUD işlemleri uygularım?
+ Razor Pages’ta JSON yerine veritabanı okuma/yazma/güncelleme örneklerini gösterebilir misin?
 *@
 @page
 @model IndexModel
@@ -19,17 +20,17 @@ Json formatında verileri boş döndürüyor. Bunu nasıl düzeltebilirim?
                     @(Model.EditId == 0 ? "➕ Add Class" : "🔄 Update Class")
                 </div>
                 <div class="card-body bg-light">
-                    <form method="post" asp-page-handler="@(Model.EditId == 0 ? "Add" : "Update")">
+                    <form method="post" asp-page-handler="SaveToDatabase">
                         <input type="hidden" asp-for="EditId" />
                         <div class="mb-3">
                             <label class="form-label">📖 Class Name</label>
-                            <input asp-for="NewClass.ClassName" class="form-control rounded-pill shadow-sm" required />
-                            <span asp-validation-for="NewClass.ClassName" class="text-danger small"></span>
+                            <input asp-for="NewClass.Name" class="form-control rounded-pill shadow-sm" required />
+                            <span asp-validation-for="NewClass.Name" class="text-danger small"></span>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">👥 Number of Students</label>
-                            <input asp-for="NewClass.StudentCount" type="number" class="form-control rounded-pill shadow-sm" required />
-                            <span asp-validation-for="NewClass.StudentCount" class="text-danger small"></span>
+                            <input asp-for="NewClass.PersonCount" type="number" class="form-control rounded-pill shadow-sm" required />
+                            <span asp-validation-for="NewClass.PersonCount" class="text-danger small"></span>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">📝 Description</label>
@@ -74,47 +75,45 @@ Json formatında verileri boş döndürüyor. Bunu nasıl düzeltebilirim?
                         </tr>
                     </thead>
                     <tbody class="bg-white">
-                        @foreach (var item in Model.FilteredClasses)
-                        {
-                            <tr>
-                                <td>@item.ClassName</td>
-                                <td>@item.StudentCount</td>
-                                <td>@item.Description</td>
-                                <td>
-                                    <!-- Edit Butonu -->
-                                    <form method="post" asp-page-handler="LoadEdit" asp-route-id="@item.Id" class="d-inline">
-                                        <button type="submit" class="btn btn-sm btn-outline-primary">✏️ Edit</button>
-                                    </form>
-                                    <!-- Delete Butonu -->
-                                    <form method="post" asp-page-handler="Delete" asp-route-id="@item.Id" class="d-inline">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">🗑️ Delete</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
+@foreach (var item in Model.FilteredClasses)
+
+
+{
+    <tr>
+        <td>@item.Name</td>
+        <td>@item.PersonCount</td>
+        <td>@item.Description</td>
+        <td>
+            <form method="post" asp-page-handler="LoadEdit" asp-route-id="@item.Id" class="d-inline">
+                <button type="submit" class="btn btn-sm btn-outline-primary">✏️ Edit</button>
+            </form>
+            <form method="post" asp-page-handler="Delete" asp-route-id="@item.Id" class="d-inline">
+                <button type="submit" class="btn btn-sm btn-outline-danger">🗑️ Delete</button>
+            </form>
+        </td>
+    </tr>
+}
+
                 </table>
             </div>
 
-            
             <div class="d-flex justify-content-end gap-3 mb-3">
-        <!-- Export Selected Columns -->
-        <form method="post" asp-page-handler="ExportSelectedJson" id="exportForm">
-            <input type="hidden" id="SelectedColumns" name="SelectedColumns" />
-            <button type="submit" class="btn btn-outline-success rounded-pill shadow-sm" id="exportButton">
-                📤 Export Columns as JSON
-            </button>
-        </form>
+                <!-- Export Selected Columns -->
+                <form method="post" asp-page-handler="ExportSelectedJson" id="exportForm">
+                    <input type="hidden" id="SelectedColumns" name="SelectedColumns" />
+                    <button type="submit" class="btn btn-outline-success rounded-pill shadow-sm" id="exportButton">
+                        📤 Export Columns as JSON
+                    </button>
+                </form>
 
-        <!-- Export Current Page -->
-        <a asp-page-handler="DownloadJson"
-        asp-route-currentPage="@Model.CurrentPage"
-        asp-route-filter="@Model.FilterText"
-        class="btn btn-outline-primary rounded-pill shadow-sm">
-            📥 Export Current Page as JSON
-        </a>
-    </div>
-
+                <!-- Export Current Page -->
+                <a asp-page-handler="DownloadJson"
+                   asp-route-currentPage="@Model.CurrentPage"
+                   asp-route-filter="@Model.FilterText"
+                   class="btn btn-outline-primary rounded-pill shadow-sm">
+                    📥 Export Current Page as JSON
+                </a>
+            </div>
 
             <!-- Sayfalama -->
             <div class="mt-4 text-center">
@@ -128,9 +127,7 @@ Json formatında verileri boş döndürüyor. Bunu nasıl düzeltebilirim?
     </div>
 </div>
 
-
 <a href="/Logout" class="btn btn-danger rounded-pill shadow-sm">🚪 Logout</a>
-
 
 @section Scripts {
     <script>
@@ -138,9 +135,9 @@ Json formatında verileri boş döndürüyor. Bunu nasıl düzeltebilirim?
         const exportButton = document.getElementById('exportButton');
 
         document.querySelectorAll('.selectable').forEach(header => {
-            header.addEventListener('click', function() {
+            header.addEventListener('click', function () {
                 const column = this.dataset.col;
-                
+
                 if (selectedColumns.has(column)) {
                     selectedColumns.delete(column);
                     this.classList.remove('table-warning');
@@ -149,11 +146,8 @@ Json formatında verileri boş döndürüyor. Bunu nasıl düzeltebilirim?
                     this.classList.add('table-warning');
                 }
 
-              
                 document.getElementById('SelectedColumns').value = Array.from(selectedColumns).join(',');
             });
         });
     </script>
 }
-
-
